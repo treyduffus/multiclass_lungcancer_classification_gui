@@ -6,7 +6,10 @@ import { Button } from "@/components/ui/button"
 import { Upload } from "lucide-react"
 
 import Dropzone from 'react-dropzone';
+import EditParams from "@/components/editparameters"
 
+// TODO: Add drawer for sliders - https://ui.shadcn.com/docs/components/drawer
+// TODO: Add toast to confirm file upload - https://ui.shadcn.com/docs/components/toast
 
 export default function Filedrop() {
   return (
@@ -15,7 +18,7 @@ export default function Filedrop() {
         <Label htmlFor="file" className="text-sm font-medium" />
         <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
         {({getRootProps, getInputProps}) => (
-        <div {...getRootProps()} className="dropzone border-2 border-dashed border-gray-200 rounded-lg flex flex-col gap-1 p-6 items-center">
+        <div {...getRootProps()} className="dropzone cursor-pointer border-2 border-dashed border-gray-200 rounded-lg flex flex-col gap-1 p-6 items-center">
           <input {...getInputProps()} />
           <FileIcon className="w-12 h-12" />
           <span className="text-sm font-medium text-gray-500">Drag and drop a file or click to browse</span>
@@ -30,7 +33,8 @@ export default function Filedrop() {
           <Input id="file" type="file" placeholder="File" accept="image/*" />
         </div>
       </CardContent>
-      <CardFooter className="flex justify-center">
+      <CardFooter className="flex justify-center space-x-4">
+        <EditParams />
         <Button size="lg" className="w-full">
           Upload <Upload />
         </Button>
@@ -41,20 +45,15 @@ export default function Filedrop() {
 
 function FileIcon(props) {
   return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-      <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+        <svg
+          {...props}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#e8eaed"
+        >
+          <path d="M200-120q-33 0-56.5-23.5T120-200v-400q0-33 23.5-56.5T200-680h160v80H200v400h560v-400H600v-80h160q33 0 56.5 23.5T840-600v400q0 33-23.5 56.5T760-120H200Zm280-200L320-480l56-56 64 63v-487h80v487l64-63 56 56-160 160Z"/>
     </svg>
   )
 }
