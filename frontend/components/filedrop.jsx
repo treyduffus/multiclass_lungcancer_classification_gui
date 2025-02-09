@@ -5,18 +5,28 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Upload } from "lucide-react"
 
+import toast from 'react-hot-toast';
+
 import Dropzone from 'react-dropzone';
 import EditParams from "@/components/editparameters"
 
 // TODO: Add drawer for sliders - https://ui.shadcn.com/docs/components/drawer
-// TODO: Add toast to confirm file upload - https://ui.shadcn.com/docs/components/toast
 
 export default function Filedrop() {
+  const sucessfulyUploaded = () => toast.success('Your file has been uploaded.');
+
   return (
     <Card>
       <CardContent className="p-6 space-y-4">
         <Label htmlFor="file" className="text-sm font-medium" />
-        <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
+        <Dropzone 
+            onDrop={acceptedFiles => console.log(acceptedFiles)}
+            accept={{
+              'application/pdf': ['.pdf'],
+              'application/json': ['.json'],
+              'text/csv': ['.csv']
+            }}
+          >
         {({getRootProps, getInputProps}) => (
         <div {...getRootProps()} className="dropzone cursor-pointer border-2 border-dashed border-gray-200 rounded-lg flex flex-col gap-1 p-6 items-center">
           <input {...getInputProps()} />
@@ -30,12 +40,17 @@ export default function Filedrop() {
           <Label htmlFor="file" className="text-sm font-medium">
             File
           </Label>
-          <Input id="file" type="file" placeholder="File" accept="image/*" />
+          <Input 
+            id="file" 
+            type="file" 
+            placeholder="File" 
+            accept=".pdf,.json,.csv"
+          />
         </div>
       </CardContent>
       <CardFooter className="flex justify-center space-x-4">
         <EditParams />
-        <Button size="lg" className="w-full">
+        <Button size="lg" className="w-full" onClick={sucessfulyUploaded}>
           Upload <Upload />
         </Button>
       </CardFooter>
