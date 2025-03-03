@@ -1,14 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Multiclass Lung Cancer Classification Frontend
+
+This is the frontend for the Multiclass Lung Cancer Classification application. It allows users to upload CSV files for analysis and displays the classification results.
+
+## Features
+
+- CSV file upload with drag-and-drop support
+- Real-time status updates for file processing
+- Display of classification results
+- Download of processed results
 
 ## Getting Started
 
 First, install the dependencies:
 
 ```bash
-npm i
+npm install
+# or
+yarn install
+# or
+pnpm install
 ```
 
-Then, run the development server:
+Then, create a `.env.local` file in the root directory with the following content:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:5001/api
+```
+
+Adjust the URL if your backend is running on a different host or port.
+
+## Running the Development Server
 
 ```bash
 npm run dev
@@ -16,19 +37,31 @@ npm run dev
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## File Upload
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application accepts CSV files for lung cancer classification. The CSV files should have the following format:
 
-## Learn More
+- Each row represents a sample
+- Columns should contain the features used for classification
+- The file should not include headers
 
-To learn more about Next.js, take a look at the following resources:
+After uploading, the file will be sent to the backend for processing, and the results will be displayed once processing is complete.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API Integration
+
+The frontend communicates with the Flask backend through the following endpoints:
+
+- `/api/upload` - POST endpoint for uploading CSV files
+- `/api/status/:fileId` - GET endpoint for checking the status of a file
+- `/api/download/:fileId` - GET endpoint for downloading the results
+
+## Technologies Used
+
+- Next.js
+- React
+- Tailwind CSS
+- shadcn/ui components
