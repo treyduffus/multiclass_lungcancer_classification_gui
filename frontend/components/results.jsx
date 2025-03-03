@@ -2,35 +2,30 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, FileText, Download, RefreshCw } from "lucide-react";
+import { Loader2, FileText, Download } from "lucide-react";
 import { getFileStatus, downloadResults } from "@/lib/api";
 
 export default function Results({ fileId, onReset }) {
   const [loading, setLoading] = useState(true);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
 
   const fetchResults = async () => {
     if (!fileId) return;
 
-    setLoading(true);
-    setError(null);
-
     try {
       const data = await getFileStatus(fileId);
       setResults(data);
+
+      // If still processing, continue polling
+      if (data.status === "processing") {
+        setTimeout(fetchResults, 1000); // Poll every second
+      }
     } catch (error) {
       setError(error.message || "Failed to fetch results");
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await fetchResults();
-    setRefreshing(false);
   };
 
   const handleDownload = () => {
@@ -41,11 +36,13 @@ export default function Results({ fileId, onReset }) {
 
   useEffect(() => {
     if (fileId) {
+      setLoading(true);
+      setError(null);
       fetchResults();
     }
   }, [fileId]);
 
-  if (loading) {
+  if (loading && !results) {
     return (
       <Card className="w-full max-w-md">
         <CardContent className="p-6 flex flex-col items-center justify-center min-h-[200px]">
@@ -62,23 +59,9 @@ export default function Results({ fileId, onReset }) {
         <CardContent className="p-6">
           <div className="text-center">
             <p className="text-red-500 mb-4">{error}</p>
-            <div className="flex justify-center gap-4">
-              <Button
-                variant="outline"
-                onClick={handleRefresh}
-                disabled={refreshing}
-              >
-                {refreshing ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : (
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                )}
-                Retry
-              </Button>
-              <Button variant="ghost" onClick={onReset}>
-                Upload Another File
-              </Button>
-            </div>
+            <Button variant="primary" onClick={onReset}>
+              Try Again
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -103,27 +86,16 @@ export default function Results({ fileId, onReset }) {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>Classification Results</span>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRefresh}
-            disabled={refreshing}
-          >
-            {refreshing ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <RefreshCw className="h-4 w-4" />
-            )}
-          </Button>
-        </CardTitle>
+        <CardTitle>Classification Results</CardTitle>
       </CardHeader>
       <CardContent className="p-6">
         {results.status === "processing" ? (
           <div className="flex flex-col items-center justify-center py-8">
             <Loader2 className="h-8 w-8 text-blue-500 animate-spin mb-4" />
             <p className="text-gray-600">Still processing your file...</p>
+            <p className="text-sm text-gray-500 mt-2">
+              This should take about 5 seconds
+            </p>
           </div>
         ) : results.status === "completed" ? (
           <div className="space-y-4">

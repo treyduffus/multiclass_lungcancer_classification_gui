@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Testing
+/coverage
+/test-results/
+playwright-report/
+
+# Next.js
+.next/
+out/
+build/
+dist/
+.swc/
+
+# Environment files
+.env*.local
+.env.development
+.env.test
+.env.production
+
+# Debug
+.DS_Store
+*.pem
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Misc
+*.log
+.vercel
+.turbo
+README.md
+
+# Version control
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose* 
