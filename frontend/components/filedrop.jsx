@@ -10,6 +10,7 @@ import {
   CheckCircle,
   AlertCircle,
   Loader2,
+  X as XIcon,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import Dropzone from "react-dropzone";
@@ -65,6 +66,14 @@ export default function Filedrop({ onUploadSuccess }) {
     }
   };
 
+  const handleRemoveFile = () => {
+    setFile(null);
+    setFileName("");
+    setUploadSuccess(false);
+    setUploadError(false);
+    toast.success("File removed");
+  };
+
   const handleUpload = async () => {
     if (!file) {
       toast.error("Please select a file first");
@@ -112,24 +121,31 @@ export default function Filedrop({ onUploadSuccess }) {
           {({ getRootProps, getInputProps }) => (
             <div
               {...getRootProps()}
-              className={`dropzone cursor-pointer border-2 border-dashed rounded-lg flex flex-col gap-2 p-6 items-center transition-colors
-                ${
-                  file
-                    ? "border-green-300 bg-green-50"
-                    : "border-gray-200 hover:border-blue-300 hover:bg-blue-50"
-                }`}
+              className={`dropzone cursor-pointer border-2 border-dashed rounded-lg flex flex-col gap-2 p-6 items-center transition-all duration-200
+                ${file ? "border-green-300 bg-green-50" : "border-gray-200 hover:border-blue-300 hover:bg-blue-50"}`}
             >
               <input {...getInputProps()} />
               {file ? (
-                <>
-                  <FileText className="w-12 h-12 text-green-500" />
-                  <span className="text-sm font-medium text-gray-700">
+                <div className="relative w-full flex flex-col items-center">
+                  <FileText className="w-12 h-12 text-green-500 animate-scale-up" />
+                  <span className="text-sm font-medium text-gray-700 mt-2 animate-fade-up">
                     {fileName}
                   </span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-500 animate-fade-up delay-100">
                     CSV file selected
                   </span>
-                </>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-100 hover:bg-red-200 transition-colors animate-scale-up"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveFile();
+                    }}
+                  >
+                    <XIcon className="h-4 w-4 text-red-600" />
+                  </Button>
+                </div>
               ) : (
                 <>
                   <CSVIcon className="w-12 h-12" />
@@ -159,12 +175,22 @@ export default function Filedrop({ onUploadSuccess }) {
         </div>
 
         {file && (
-          <div className="p-3 bg-gray-50 rounded-md">
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4 text-blue-500" />
-              <span className="text-sm font-medium text-gray-700 truncate">
-                {fileName}
-              </span>
+          <div className="p-3 bg-gray-50 rounded-md animate-fade-up">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-blue-500" />
+                <span className="text-sm font-medium text-gray-700 truncate">
+                  {fileName}
+                </span>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-6 w-6 hover:bg-red-100 transition-colors"
+                onClick={handleRemoveFile}
+              >
+                <XIcon className="h-4 w-4 text-red-600" />
+              </Button>
             </div>
           </div>
         )}
