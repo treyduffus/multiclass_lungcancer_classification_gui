@@ -4,7 +4,7 @@
 
 // Backend API URL
 export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001/api";
 
 // File upload endpoint
 export const UPLOAD_ENDPOINT = `${API_URL}/upload`;
