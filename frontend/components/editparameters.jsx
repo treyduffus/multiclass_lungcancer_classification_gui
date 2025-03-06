@@ -1,60 +1,86 @@
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { Info } from "lucide-react"
 
 export default function EditParams() {
   return (
-<Popover>
+    <Popover>
       <PopoverTrigger asChild>
-        <Button size="lg" variant="outline">Edit Parameters</Button>
+        <Button size="lg" variant="outline">Select Model</Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80">
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <h4 className="font-medium leading-none">Parameters</h4>
-            <p className="text-sm text-muted-foreground">
-              Edit model parameters.
-            </p>
+      <PopoverContent className="w-[240px] p-3">
+        <div className="space-y-4">
+          <div className="flex items-center">
+            <h4 className="font-medium text-sm">Select Model</h4>
           </div>
-          <div className="grid gap-2">
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="confidence">Confidence</Label>
-              <Input
-                id="confidence"
-                defaultValue="100%"
-                className="col-span-2 h-8"
-              />
+          <RadioGroup defaultValue="svm" className="gap-3">
+            <div className="flex items-center justify-between rounded-md border border-transparent p-2 hover:bg-muted transition-colors">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="svm" id="svm" />
+                <Label htmlFor="svm" className="text-sm cursor-pointer">SVM</Label>
+              </div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-6 w-6">
+                      <Info className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="w-[200px] text-xs">Support Vector Machine (SVM) is a supervised learning algorithm that separates data points using hyperplanes, effective for both classification and regression tasks.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="ageLimit">Age limit</Label>
-              <Input
-                id="ageLimit"
-                defaultValue="80"
-                className="col-span-2 h-8"
-              />
+            <div className="flex items-center justify-between rounded-md border border-transparent p-2 hover:bg-muted transition-colors">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="random_forest" id="random_forest" />
+                <Label htmlFor="random_forest" className="text-sm cursor-pointer">Random Forest</Label>
+              </div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-6 w-6">
+                      <Info className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="w-[200px] text-xs">Random Forest is an ensemble learning method that constructs multiple decision trees and outputs the class that is the mode of the classes of individual trees.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="weight">Weight (lbs)</Label>
-              <Input
-                id="weight"
-                defaultValue="120"
-                className="col-span-2 h-8"
-              />
+            <div className="flex items-center justify-between rounded-md border border-transparent p-2 hover:bg-muted transition-colors">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="saint" id="saint" />
+                <Label htmlFor="saint" className="text-sm cursor-pointer">SAINT</Label>
+              </div>
+              <TooltipProvider>
+                <Tooltip >
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-6 w-6">
+                      <Info className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="w-[200px] text-xs">Self-Attention and Intersample Attention Transformer (SAINT) is a neural network architecture that uses transformers to process tabular data with both numerical and categorical features.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
-            <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="maxHeight">Pack per year</Label>
-              <Input
-                id="maxHeight"
-                defaultValue="none"
-                className="col-span-2 h-8"
-              />
-            </div>
-          </div>
+          </RadioGroup>
         </div>
       </PopoverContent>
     </Popover>
