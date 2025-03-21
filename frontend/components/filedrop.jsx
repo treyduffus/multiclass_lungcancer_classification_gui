@@ -25,6 +25,11 @@ export default function Filedrop({ onUploadSuccess }) {
   const [uploading, setUploading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [uploadError, setUploadError] = useState(false);
+  const [parameters, setParameters] = useState({
+    target: '',
+    model: '',
+    task: ''
+  });
 
   const handleFileDrop = (acceptedFiles) => {
     const selectedFile = acceptedFiles[0];
@@ -74,9 +79,18 @@ export default function Filedrop({ onUploadSuccess }) {
     toast.success("File removed");
   };
 
+  const handleParametersChange = (newParams) => {
+    setParameters(newParams);
+  };
+
   const handleUpload = async () => {
     if (!file) {
       toast.error("Please select a file first");
+      return;
+    }
+
+    if (!parameters.target || !parameters.model || !parameters.task) {
+      toast.error("Please select all model parameters");
       return;
     }
 
@@ -85,13 +99,17 @@ export default function Filedrop({ onUploadSuccess }) {
     setUploadError(false);
 
     try {
-      const response = await uploadCSVFile(file);
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('target', parameters.target);
+      formData.append('model', parameters.model);
+      formData.append('task', parameters.task);
+
+      const response = await uploadCSVFile(formData);
       setUploading(false);
       setUploadSuccess(true);
       toast.success("File uploaded successfully");
-      console.log("Upload response:", response);
-
-      // Call the onUploadSuccess callback with the file ID from the response
+      
       if (onUploadSuccess && response.fileId) {
         onUploadSuccess(response.fileId);
       }
@@ -196,7 +214,7 @@ export default function Filedrop({ onUploadSuccess }) {
         )}
       </CardContent>
       <CardFooter className="flex justify-between space-x-4 p-6 pt-2">
-        <EditParams />
+        <EditParams onParametersChange={handleParametersChange} />
         <Button
           size="lg"
           className="w-full"
