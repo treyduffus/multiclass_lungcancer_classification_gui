@@ -1,6 +1,7 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
+import logging
 import os
 import uuid
 import shutil
@@ -9,6 +10,8 @@ from typing import Dict, List, Optional
 import time
 
 app = FastAPI(title="Lung Cancer Classification API")
+
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # Create directories for storing uploaded files and results
 os.makedirs("uploads", exist_ok=True)
@@ -36,16 +39,22 @@ def home():
 
 @app.post("/api/upload")
 async def upload_file(file: UploadFile = File(...)):
+    logging.info(f"Received file upload request: {file.filename}")
+
     # Validate file type
-    if not file.filename.endswith('.csv'):
+    is_csv = file.filename.endswith('.csv')
+    is_txt = file.filename.endswith('.txt')
+
+    if not (is_csv or is_txt):
         raise HTTPException(
-            status_code=400, detail="Only CSV files are allowed")
+            status_code=400, detail="Only CSV and TXT files are allowed")
 
     # Generate a unique ID for the file
     file_id = str(uuid.uuid4())
 
     # Save the file
-    file_path = f"uploads/{file_id}.csv"
+    file_path = f"uploads/{file_id}.csv" if is_csv else f"uploads/{file_id}.txt"
+
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 

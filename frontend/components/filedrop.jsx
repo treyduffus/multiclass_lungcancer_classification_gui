@@ -15,7 +15,7 @@ import {
 import toast from "react-hot-toast";
 import Dropzone from "react-dropzone";
 import EditParams from "@/components/editparameters";
-import { uploadCSVFile } from "@/lib/api";
+import { uploadFile } from "@/lib/api";
 
 // TODO: Add drawer for sliders - https://ui.shadcn.com/docs/components/drawer
 
@@ -34,12 +34,12 @@ export default function Filedrop({ onUploadSuccess }) {
   const handleFileDrop = (acceptedFiles) => {
     const selectedFile = acceptedFiles[0];
     if (selectedFile) {
-      // Check if file is CSV
+      // Check if file is CSV or TXT
       if (
-        selectedFile.type !== "text/csv" &&
-        !selectedFile.name.endsWith(".csv")
+        (selectedFile.type !== "text/csv" && selectedFile.type !== "text/plain") &&
+        !(selectedFile.name.endsWith(".csv") || selectedFile.name.endsWith(".txt"))
       ) {
-        toast.error("Please upload a CSV file");
+        toast.error("Please upload a CSV or TXT file");
         return;
       }
 
@@ -54,12 +54,12 @@ export default function Filedrop({ onUploadSuccess }) {
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
-      // Check if file is CSV
+      // Check if file is CSV or TXT
       if (
-        selectedFile.type !== "text/csv" &&
-        !selectedFile.name.endsWith(".csv")
+        (selectedFile.type !== "text/csv" && selectedFile.type !== "text/plain") &&
+        !(selectedFile.name.endsWith(".csv") || selectedFile.name.endsWith(".txt"))
       ) {
-        toast.error("Please upload a CSV file");
+        toast.error("Please upload a CSV or TXT file");
         return;
       }
 
@@ -105,7 +105,7 @@ export default function Filedrop({ onUploadSuccess }) {
       formData.append('model', parameters.model);
       formData.append('task', parameters.task);
 
-      const response = await uploadCSVFile(formData);
+      const response = await uploadFile(formData);
       setUploading(false);
       setUploadSuccess(true);
       toast.success("File uploaded successfully");
@@ -124,7 +124,7 @@ export default function Filedrop({ onUploadSuccess }) {
     <Card className="w-full max-w-md">
       <CardContent className="p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <Label className="text-lg font-medium">Upload CSV File</Label>
+          <Label className="text-lg font-medium">Upload CSV or TXT File</Label>
           {uploadSuccess && <CheckCircle className="h-5 w-5 text-green-500" />}
           {uploadError && <AlertCircle className="h-5 w-5 text-red-500" />}
         </div>
@@ -133,6 +133,7 @@ export default function Filedrop({ onUploadSuccess }) {
           onDrop={handleFileDrop}
           accept={{
             "text/csv": [".csv"],
+            "text/plain": [".txt"]
           }}
           multiple={false}
         >
@@ -150,7 +151,7 @@ export default function Filedrop({ onUploadSuccess }) {
                     {fileName}
                   </span>
                   <span className="text-xs text-gray-500 animate-fade-up delay-100">
-                    CSV file selected
+                    file selected
                   </span>
                   <Button
                     variant="ghost"
@@ -168,10 +169,10 @@ export default function Filedrop({ onUploadSuccess }) {
                 <>
                   <CSVIcon className="w-12 h-12" />
                   <span className="text-sm font-medium text-gray-700">
-                    Drag and drop a CSV file or click to browse
+                    Drag and drop a file or click to browse
                   </span>
                   <span className="text-xs text-gray-500">
-                    Only CSV files are supported
+                    Only CSV and TXT files are supported
                   </span>
                 </>
               )}
@@ -187,7 +188,7 @@ export default function Filedrop({ onUploadSuccess }) {
             id="file"
             type="file"
             onChange={handleFileChange}
-            accept=".csv"
+            accept=".csv, .txt"
             className="cursor-pointer"
           />
         </div>
