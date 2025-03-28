@@ -3,4 +3,3 @@ uvicorn==0.34.0
 python-multipart==0.0.9
 pandas==2.2.0
 requests==2.31.0
-fastapi[standard]==4.13.0
