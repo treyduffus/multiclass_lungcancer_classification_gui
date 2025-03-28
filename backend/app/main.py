@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from app.processing import preprocess_data
+from app.feature_selection import select_features
 import logging
 import os
 import uuid
@@ -59,7 +60,11 @@ async def upload_file(file: UploadFile = File(...)):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    preprocess_data(file, file_path)
+    processed_data = preprocess_data(file, file_path)
+
+    reduced_data = select_features(processed_data)
+
+    logging.info(reduced_data)
 
     # Start processing in background (simulated)
     file_status[file_id] = {
