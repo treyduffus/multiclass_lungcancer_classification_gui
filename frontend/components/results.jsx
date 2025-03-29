@@ -118,10 +118,10 @@ export default function Results({ fileId, onReset }) {
                 <thead className="bg-slate-50">
                   <tr>
                     <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                      Class
+                      Target
                     </th>
                     <th className="px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                      Confidence
+                      Prediction
                     </th>
                   </tr>
                 </thead>
@@ -134,10 +134,10 @@ export default function Results({ fileId, onReset }) {
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <td className="px-4 py-2 text-sm text-slate-900">
-                          {pred.class}
+                          {pred.target}
                         </td>
                         <td className="px-4 py-2 text-sm text-slate-900">
-                          {(pred.confidence * 100).toFixed(2)}%
+                          {pred.result}
                         </td>
                       </tr>
                     ))}

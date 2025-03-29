@@ -34,6 +34,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+results_cache = {}
+
 
 @app.get("/")
 def home():
@@ -41,7 +43,7 @@ def home():
 
 
 @app.post("/api/upload")
-async def upload_file(file: UploadFile = File(...), model: str = Form(...),):
+async def upload_file(file: UploadFile = File(...), model: str = Form(...)):
     logging.info(f"Received file upload request: {file.filename}")
 
     # Validate file type
@@ -61,44 +63,38 @@ async def upload_file(file: UploadFile = File(...), model: str = Form(...),):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
+    results_cache[file_id] = {
+        "status": "processing",
+        "predictions": []
+    }
+
     processed_data = preprocess_data(file, file_path)
 
     reduced_data = select_features(processed_data)
 
     predictions = predict_sample(reduced_data, model)
 
-    logging.info(predictions)
+    results = [
+                {"target": "Diagnosis", "result": predictions[0]},
+                {"target": "Stage", "result": predictions[1]},
+                {"target": "Subtype", "result": predictions[2]}
+              ]
 
-    # Start processing in background (simulated)
-    file_status[file_id] = {
-        "status": "processing",
-        "filename": file.filename,
-        "upload_time": time.time()
+    results_cache[file_id] = {
+        "status": "completed",
+        "predictions": results
     }
 
-    return {"fileId": file_id, "message": "File uploaded successfully and processing started"}
+    logging.info(predictions)
 
+    return {"fileId": file_id, "message": "File uploaded successfully"}
 
 @app.get("/api/status/{file_id}")
 async def get_status(file_id: str):
-    if file_id not in file_status:
+    if file_id not in results_cache:
         raise HTTPException(status_code=404, detail="File not found")
 
-    # Simulate processing completion after 5 seconds
-    if file_status[file_id]["status"] == "processing":
-        elapsed_time = time.time() - file_status[file_id]["upload_time"]
-        if elapsed_time > 5:
-            # Simulate processing completion
-            file_status[file_id]["status"] = "completed"
-
-            # Generate mock predictions
-            file_status[file_id]["predictions"] = [
-                {"class": "Adenocarcinoma", "confidence": 0.85},
-                {"class": "Squamous Cell Carcinoma", "confidence": 0.10},
-                {"class": "Small Cell Carcinoma", "confidence": 0.05}
-            ]
-
-    return file_status[file_id]
+    return results_cache[file_id]
 
 
 @app.get("/api/download/{file_id}")
@@ -114,9 +110,6 @@ async def download_results(file_id: str):
 
     # Create a simple CSV with the predictions
     # ! This is a mock implementation
-    predictions = file_status[file_id]["predictions"]
-    df = pd.DataFrame(predictions)
-    df.to_csv(result_path, index=False)
 
     return FileResponse(
         path=result_path,
