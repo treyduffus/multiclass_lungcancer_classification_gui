@@ -26,9 +26,7 @@ export default function Filedrop({ onUploadSuccess }) {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [uploadError, setUploadError] = useState(false);
   const [parameters, setParameters] = useState({
-    target: '',
     model: '',
-    task: ''
   });
 
   const handleFileDrop = (acceptedFiles) => {
@@ -89,7 +87,7 @@ export default function Filedrop({ onUploadSuccess }) {
       return;
     }
 
-    if (!parameters.target || !parameters.model || !parameters.task) {
+    if (!parameters.model) {
       toast.error("Please select all model parameters");
       return;
     }
