@@ -1,8 +1,9 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from app.processing import preprocess_data
 from app.feature_selection import select_features
+from app.classification import predict_sample
 import logging
 import os
 import uuid
@@ -40,7 +41,7 @@ def home():
 
 
 @app.post("/api/upload")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(file: UploadFile = File(...), model: str = Form(...),):
     logging.info(f"Received file upload request: {file.filename}")
 
     # Validate file type
@@ -64,7 +65,9 @@ async def upload_file(file: UploadFile = File(...)):
 
     reduced_data = select_features(processed_data)
 
-    logging.info(reduced_data)
+    predictions = predict_sample(reduced_data, model)
+
+    logging.info(predictions)
 
     # Start processing in background (simulated)
     file_status[file_id] = {
