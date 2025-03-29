@@ -6,6 +6,7 @@ from app.feature_selection import select_features
 from app.classification import predict_sample
 import logging
 import os
+import csv
 import uuid
 import shutil
 import pandas as pd
@@ -20,9 +21,6 @@ logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %
 os.makedirs("uploads", exist_ok=True)
 os.makedirs("results", exist_ok=True)
 
-# Dictionary to store processing status
-file_status: Dict[str, Dict] = {}
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -35,7 +33,6 @@ app.add_middleware(
 )
 
 results_cache = {}
-
 
 @app.get("/")
 def home():
@@ -65,6 +62,7 @@ async def upload_file(file: UploadFile = File(...), model: str = Form(...)):
 
     results_cache[file_id] = {
         "status": "processing",
+        "filename": file.filename,
         "predictions": []
     }
 
@@ -82,6 +80,7 @@ async def upload_file(file: UploadFile = File(...), model: str = Form(...)):
 
     results_cache[file_id] = {
         "status": "completed",
+        "filename": file.filename,
         "predictions": results
     }
 
@@ -99,28 +98,30 @@ async def get_status(file_id: str):
 
 @app.get("/api/download/{file_id}")
 async def download_results(file_id: str):
-    if file_id not in file_status:
+    if file_id not in results_cache:
         raise HTTPException(status_code=404, detail="File not found")
 
-    if file_status[file_id]["status"] != "completed":
+    if results_cache[file_id]["status"] != "completed":
         raise HTTPException(
             status_code=400, detail="Processing not completed yet")
 
     result_path = f"results/{file_id}_results.csv"
 
-    # Create a simple CSV with the predictions
-    # ! This is a mock implementation
+    with open(result_path, mode="w", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=["target", "result"])
+        writer.writeheader()
+        writer.writerows(results_cache[file_id]["predictions"])
+
+    print(f"Results saved to {result_path}")
 
     return FileResponse(
         path=result_path,
-        filename=f"{file_status[file_id]['filename'].replace('.csv', '')}_results.csv",
+        filename=f"{results_cache[file_id]['filename'].replace('.csv', '_results.csv')}",
         media_type="text/csv"
     )
 
 # Add a cleanup endpoint for testing
-
-
 @app.delete("/api/cleanup")
 async def cleanup():
-    file_status.clear()
+    results_cache.clear()
     return {"message": "Cleanup completed"}
