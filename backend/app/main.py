@@ -22,22 +22,22 @@ logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %
 load_dotenv()
 
 # Read FRONTEND_URL from environment variable, default to localhost:3005 if not set
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3005")
+#FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3005")
 
 # Define allowed origins
-origins = [
-    "http://localhost:3005",  # Keep localhost for local development
-    "http://127.0.0.1:3005", # Keep localhost IP for local development
-]
+#origins = [
+#    "http://localhost:3005",  # Keep localhost for local development
+#    "http://127.0.0.1:3005", # Keep localhost IP for local development
+#]
 
 # Add FRONTEND_URL to origins if it's different from the defaults
-if FRONTEND_URL not in origins:
-    print(f"Adding {FRONTEND_URL} to allowed origins")
-    origins.append(FRONTEND_URL)
+#if FRONTEND_URL not in origins:
+#    print(f"Adding {FRONTEND_URL} to allowed origins")
+#    origins.append(FRONTEND_URL)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins, # Use the updated origins list
+    allow_origins=["*"], # Use the updated origins list
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
