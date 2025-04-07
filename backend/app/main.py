@@ -12,28 +12,42 @@ import shutil
 import pandas as pd
 from typing import Dict, List, Optional
 import time
+from dotenv import load_dotenv
 
 app = FastAPI(title="Lung Cancer Classification API")
 
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 
-# Create directories for storing uploaded files and results
-os.makedirs("uploads", exist_ok=True)
-os.makedirs("results", exist_ok=True)
+# Load environment variables from a .env file
+load_dotenv()
+
+# Read FRONTEND_URL from environment variable, default to localhost:3005 if not set
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3005")
+
+# Define allowed origins
+origins = [
+    "http://localhost:3005",  # Keep localhost for local development
+    "http://127.0.0.1:3005", # Keep localhost IP for local development
+]
+
+# Add FRONTEND_URL to origins if it's different from the defaults
+if FRONTEND_URL not in origins:
+    print(f"Adding {FRONTEND_URL} to allowed origins")
+    origins.append(FRONTEND_URL)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3005",
-        "http://127.0.0.1:3005",
-        os.getenv("FRONTEND_URL")
-    ],
+    allow_origins=origins, # Use the updated origins list
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
 )
 
 results_cache = {}
+
+# Create directories for storing uploaded files and results
+os.makedirs("uploads", exist_ok=True)
+os.makedirs("results", exist_ok=True)
 
 @app.get("/")
 def home():

@@ -1,6 +1,7 @@
-fastapi==0.115.8
-uvicorn==0.34.0
-python-multipart==0.0.9
-pandas==2.2.0
-requests==2.31.0
-scikit-learn==1.5.1
+fastapi
+uvicorn
+python-multipart
+pandas
+requests
+scikit-learn
+python-dotenv
