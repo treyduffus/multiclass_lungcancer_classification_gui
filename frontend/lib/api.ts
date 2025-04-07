@@ -4,15 +4,12 @@
 import { UPLOAD_ENDPOINT, STATUS_ENDPOINT, DOWNLOAD_ENDPOINT } from "./config";
 
 /**
- * Upload a CSV file to the backend for processing
- * @param file The CSV file to upload
+ * Upload a CSV/TXT file to the backend for processing
+ * @param file The file to upload
  * @returns The response from the backend
  */
-export async function uploadCSVFile(file: File) {
+export async function uploadFile(formData: FormData) {
   try {
-    const formData = new FormData();
-    formData.append("file", file);
-
     const response = await fetch(UPLOAD_ENDPOINT, {
       method: "POST",
       body: formData,
