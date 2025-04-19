@@ -10,6 +10,12 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  .bg-shine {
+    @apply bg-[linear-gradient(120deg,hsl(var(--background))_0%,hsl(var(--secondary))_40%,hsl(var(--background))_80%)]
+           dark:bg-[linear-gradient(120deg,hsl(var(--background))_0%,hsl(var(--secondary)/0.1)_40%,hsl(var(--background))_80%)]
+           bg-200%
+           animate-gradient-x;
+  }
 }
 
 @layer base {

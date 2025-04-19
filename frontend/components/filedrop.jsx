@@ -119,7 +119,7 @@ export default function Filedrop({ onUploadSuccess }) {
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md bg-shine shadow-xl">
       <CardContent className="p-6 space-y-4">
         <div className="flex items-center justify-between">
           <Label className="text-lg font-medium">Upload CSV or TXT File</Label>
@@ -196,8 +196,8 @@ export default function Filedrop({ onUploadSuccess }) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-blue-500" />
-                <span className="text-sm font-medium text-gray-700 truncate">
-                  {fileName}
+                <span className="text-sm font-medium text-gray-700 mt-2 truncate max-w-[12rem] text-center">
+                {fileName}
                 </span>
               </div>
               <Button
