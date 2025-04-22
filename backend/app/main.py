@@ -84,13 +84,25 @@ async def upload_file(file: UploadFile = File(...), model: str = Form(...)):
     processed_data = preprocess_data(file, file_path)
 
     reduced_data = select_features(processed_data)
+    print("Selected features:")
+    print(reduced_data.columns.tolist())
 
     predictions = predict_sample(reduced_data, model)
+    print("Predictions:")
+
+    def chunk_list(lst, n):
+        return [lst[i:i + n] for i in range(0, len(lst), n)]
+
+    cleaned_features = [f.replace("hsa-", "") for f in reduced_data.columns.tolist()]
+    chunked = chunk_list(cleaned_features, 6)
+    pretty_features = "\n".join([", ".join(chunk) for chunk in chunked])
+
 
     results = [
                 {"target": "Diagnosis", "result": predictions[0]},
                 {"target": "Stage", "result": predictions[1]},
-                {"target": "Subtype", "result": predictions[2]}
+                {"target": "Subtype", "result": predictions[2]},
+                {"target": "Selected Features", "result": pretty_features}
               ]
 
     results_cache[file_id] = {

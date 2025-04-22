@@ -10,6 +10,9 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+		backgroundSize: {
+			'200%': '200% 200%', // for gradient movement
+		  },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
@@ -90,12 +93,17 @@ const config: Config = {
   					opacity: "1",
   					transform: "scale(1)"
   				}
-  			}
+  			},
+			  'gradient-x': {
+				'0%, 100%': { backgroundPosition: '0% 50%' },
+				'50%': { backgroundPosition: '100% 50%' },
+			  },
   		},
   		animation: {
   			"fade-up": "fade-up 0.5s ease-out",
   			"fade-down": "fade-down 0.5s ease-out",
-  			"scale-up": "scale-up 0.3s ease-out"
+  			"scale-up": "scale-up 0.3s ease-out",
+			'gradient-x': 'gradient-x 20s ease-in-out infinite',
   		}
   	}
   },
